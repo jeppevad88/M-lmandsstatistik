@@ -28,7 +28,16 @@ button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--li
 <div class="field full"><label for="keeper">Målmand</label><input id="keeper" placeholder="Navn på målmand"></div>
 </div><div class="actions no-print" style="margin-top:10px"><button class="green" id="saveMatchBtn">Gem kamp i skyen</button><button id="loadMatchBtn">Opdater gemt kamp</button></div><p id="status" class="status" role="status" style="margin-top:10px">Forbinder til databasen…</p></section>
 <section class="card"><h2>Registrér skud <span id="selectedText" class="muted">– vælg en zone</span></h2><div class="fields" style="margin-bottom:10px"><div class="field"><label for="playerNumber">Spillerens nummer</label><input id="playerNumber" type="number" min="0" max="99" placeholder="Fx 7"></div><div class="field"><label for="shotType">Skudtype</label><select id="shotType"><option>Stående skud</option><option>Gennembrud</option><option>Fløjskud</option><option>Stregskud</option><option>Kontra</option><option>Strafkast</option><option>Andet</option></select></div><div class="field full"><label for="shotNote">Bemærkning (valgfri)</label><input id="shotNote" placeholder="Fx skud efter finte"></div></div><div class="result"><button class="green" id="saveShotBtn">● Redning</button><button class="red" id="goalShotBtn">● Mål</button></div><div class="actions no-print" style="margin-top:10px"><button id="undoBtn">Fortryd sidste</button><button id="saveNowBtn">Gem ændringer</button></div></section>
-<section class="card"><h2>Statistik</h2><div class="actions no-print" style="margin-bottom:10px"><button id="keeperStatsBtn" class="green">Målmandens statistik</button><button id="shooterStatsBtn">Spillernes statistik</button></div><div id="keeperStats"><div class="stats"><div class="stat"><strong id="total">0</strong><span>Skud mod målmanden</span></div><div class="stat"><strong id="saves">0</strong><span>Redninger</span></div><div class="stat"><strong id="goals">0</strong><span>Mål imod</span></div><div class="stat"><strong id="pct">0%</strong><span>Redningsprocent</span></div></div></div><div id="shooterStats" hidden><div class="field full"><label for="playerStatsSelect">Vælg spiller</label><select id="playerStatsSelect"><option value="">Vælg spillerens nummer</option></select></div><div class="stats" style="margin-top:10px"><div class="stat"><strong id="shTotal">0</strong><span>Skud i alt</span></div><div class="stat"><strong id="shGoals">0</strong><span>Mål scoret</span></div><div class="stat"><strong id="shSaved">0</strong><span>Reddet af målmand</span></div><div class="stat"><strong id="shPct">0%</strong><span>Træfsikkerhed</span></div></div><p class="help" id="playerStatsHint" style="margin-top:8px">Vælg en spiller for at se skuddene og statistikken.</p></div></section>
+<section class="card"><h2>Statistik</h2><div class="actions no-print" style="margin-bottom:10px"><button id="keeperStatsBtn" class="green">Målmandens statistik</button><button id="shooterStatsBtn">Spillernes statistik</button></div><div id="keeperStats"><div class="stats"><div class="stat"><strong id="total">0</strong><span>Skud mod målmanden</span></div><div class="stat"><strong id="saves">0</strong><span>Redninger</span></div><div class="stat"><strong id="goals">0</strong><span>Mål imod</span></div><div class="stat"><strong id="pct">0%</strong><span>Redningsprocent</span></div></div></div><div id="shooterStats" hidden><div class="field full"><label for="playerStatsSelect">Vælg spiller</label><select id="playerStatsSelect"><option value="">Vælg spillerens nummer</option></select></div><div class="stats" style="margin-top:10px"><div class="stat"><strong id="shTotal">0</strong><span>Skud i alt</span></div><div class="stat"><strong id="shGoals">0</strong><span>Mål scoret</span></div><div class="stat"><strong id="shSaved">0</strong><span>Reddet af målmand</span></div><div class="stat"><strong id="shPct">0%</strong><span>Træfsikkerhed</span></div></div><p class="help" id="playerStatsHint" style="margin-top:8px">Vælg en spiller for at se skuddene og statistikken.</p>
+<div id="playerProfile" hidden style="border-top:1px solid var(--line);margin-top:12px;padding-top:12px">
+ <h3 style="margin:0 0 9px;font-size:16px">Spilleroplysninger</h3>
+ <div class="fields">
+  <div class="field full"><label for="playerPosition">Position</label><select id="playerPosition"><option value="">Vælg position</option><option>Venstre fløj</option><option>Venstre back</option><option>Center</option><option>Højre back</option><option>Højre fløj</option><option>Streg</option></select></div>
+  <div class="field full"><label for="playerComment">Kommentar til spilleren</label><input id="playerComment" maxlength="250" placeholder="Fx god afslutter fra fløjen"></div>
+ </div>
+ <div class="actions no-print" style="margin-top:9px"><button id="savePlayerProfileBtn" class="green">Gem spilleroplysninger</button></div>
+ <p class="help" id="playerProfileStatus" style="margin-top:7px">Oplysninger gemmes sammen med kampen online.</p>
+</div></div></section>
 <section class="card"><h2>Hent tidligere kampe</h2><p class="help">Vælg en kamp for at hente dens skud og statistik fra databasen.</p><div class="actions no-print" style="margin-bottom:9px"><button id="refreshArchiveBtn">Opdater kamparkiv</button></div><div id="archive" class="archive-list"><span class="muted">Indlæser kampe…</span></div></section>
 </aside>
 <section class="lower">
@@ -39,7 +48,7 @@ button,input,select{font:inherit}button{cursor:pointer;border:1px solid var(--li
 <script src="./config.js"></script>
 <script>
 const ZONES=['Øverste venstre','Øverste midt','Øverste højre','Midt venstre','Midt','Midt højre','Nederste venstre','Nederste midt','Nederste højre'];
-let sb=null, selectedZone=null, currentMatchId=null, shots=[], matches=[], selectedStatsPlayer='';
+let sb=null, selectedZone=null, currentMatchId=null, shots=[], matches=[], selectedStatsPlayer='', playerNotes={};
 const $=id=>document.getElementById(id);
 function status(msg,error=false){$('status').textContent=msg;$('status').classList.toggle('error',error)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -64,6 +73,10 @@ function render(){
  $('shTotal').textContent=playerShots.length;$('shGoals').textContent=playerGoals;$('shSaved').textContent=playerSaves;
  $('shPct').textContent=(playerShots.length?Math.round(playerGoals/playerShots.length*100):0)+'%';
  $('playerStatsHint').textContent=selectedStatsPlayer?`Spiller nr. ${selectedStatsPlayer}: ${playerShots.length} skud, ${playerGoals} mål og ${playerSaves} skud reddet af målmanden.`:'Vælg en spiller for at se skuddene og statistikken.';
+ $('playerProfile').hidden=statsMode!=='shooter' || !selectedStatsPlayer;
+ const profile=playerNotes[String(selectedStatsPlayer)]||{position:'',comment:''};
+ if(document.activeElement!==$('playerPosition')) $('playerPosition').value=profile.position||'';
+ if(document.activeElement!==$('playerComment')) $('playerComment').value=profile.comment||'';
  $('playerGoalSection').hidden=statsMode!=='shooter' || !selectedStatsPlayer;
  $('playerGoalTitle').textContent=selectedStatsPlayer?`Skudplacering for spiller nr. ${selectedStatsPlayer}`:'Valgt spillers skudplacering';
  $('playerGoalSummary').textContent=selectedStatsPlayer?`${playerShots.length} skud i alt · ${playerGoals} mål · ${playerSaves} reddet`:'';
@@ -96,10 +109,29 @@ async function refreshArchive(){
  $('archive').innerHTML=matches.length?matches.map(m=>`<div class="match-item"><div><b>${esc(m.title)}</b><small>${esc(m.match_date||'Ingen dato')} · ${esc(m.opponent||'Ingen modstander')} · ${esc(m.goalkeeper||'Ingen målmand')}</small></div><button data-open="${m.id}">Åbn</button></div>`).join(''):'<span class="muted">Ingen gemte kampe endnu.</span>'}
  catch(e){$('archive').innerHTML='<span class="muted">Kamparkivet kunne ikke indlæses. Kontrollér opsætningen.</span>';status('Databasefejl: '+e.message,true)}
 }
+async function loadPlayerNotes(matchId){
+ playerNotes={};
+ const {data,error}=await sb.from('goalkeeper_player_notes').select('*').eq('match_id',matchId);
+ if(error)throw error;
+ (data||[]).forEach(row=>{playerNotes[String(row.player_number)]={position:row.position||'',comment:row.comment||'',id:row.id}});
+}
+async function savePlayerProfile(){
+ if(!currentMatchId){status('Gem først kampen, før du gemmer spilleroplysninger.',true);return}
+ if(!selectedStatsPlayer){status('Vælg først en spiller.',true);return}
+ const n=String(selectedStatsPlayer), position=$('playerPosition').value, comment=$('playerComment').value.trim();
+ try{
+  const row={match_id:currentMatchId,player_number:Number(n),position,comment};
+  const {data,error}=await sb.from('goalkeeper_player_notes').upsert(row,{onConflict:'match_id,player_number'}).select().single();
+  if(error)throw error;
+  playerNotes[n]={position,comment,id:data.id};
+  $('playerProfileStatus').textContent='Spilleroplysninger gemt online.';
+  status(`Oplysninger for spiller nr. ${n} er gemt.`);
+ }catch(e){$('playerProfileStatus').textContent='Kunne ikke gemme oplysninger: '+e.message;status('Fejl ved gemning af spilleroplysninger: '+e.message,true)}
+}
 async function openMatch(id){
  try{const {data:m,error:me}=await sb.from('goalkeeper_matches').select('*').eq('id',id).single();if(me)throw me;
  const {data:s,error:se}=await sb.from('goalkeeper_shots').select('*').eq('match_id',id).order('created_at',{ascending:true});if(se)throw se;
- currentMatchId=id;shots=s||[];updateMeta(m);render();status('Tidligere kamp hentet fra skyen.')}
+ currentMatchId=id;shots=s||[];await loadPlayerNotes(id);selectedStatsPlayer='';updateMeta(m);render();status('Tidligere kamp hentet fra skyen.')}
  catch(e){status('Kunne ikke hente kampen: '+e.message,true)}
 }
 async function undo(){if(!shots.length)return;const last=shots[shots.length-1];if(last.id){const {error}=await sb.from('goalkeeper_shots').delete().eq('id',last.id);if(error){status(error.message,true);return}}shots.pop();render();status('Sidste skud fjernet.')}
@@ -108,9 +140,9 @@ document.addEventListener('click',async e=>{
  const del=e.target.closest('[data-delete]');if(del){const id=del.dataset.delete;const s=shots.find(x=>String(x.id||x._tempId)===id);if(s?.id){const {error}=await sb.from('goalkeeper_shots').delete().eq('id',s.id);if(error){status(error.message,true);return}}shots=shots.filter(x=>String(x.id||x._tempId)!==id);render();status('Skud slettet.')}
 });
 document.addEventListener('change',async e=>{if(e.target.matches('[data-note]')){const s=shots.find(x=>String(x.id||x._tempId)===e.target.dataset.note);if(s){s.note=e.target.value;if(s.id){const {error}=await sb.from('goalkeeper_shots').update({note:s.note}).eq('id',s.id);if(error)status(error.message,true)}}}});
-$('saveShotBtn').onclick=()=>addShot('Redning');$('goalShotBtn').onclick=()=>addShot('Mål');$('playerStatsSelect').addEventListener('change',e=>{selectedStatsPlayer=e.target.value;render()});$('keeperStatsBtn').onclick=()=>setStatsMode('keeper');$('shooterStatsBtn').onclick=()=>setStatsMode('shooter');$('saveMatchBtn').onclick=saveMeta;$('saveNowBtn').onclick=saveMeta;$('loadMatchBtn').onclick=async()=>{if(currentMatchId)await openMatch(currentMatchId);else await saveMeta()};
+$('savePlayerProfileBtn').onclick=savePlayerProfile;$('saveShotBtn').onclick=()=>addShot('Redning');$('goalShotBtn').onclick=()=>addShot('Mål');$('playerStatsSelect').addEventListener('change',e=>{selectedStatsPlayer=e.target.value;render()});$('keeperStatsBtn').onclick=()=>setStatsMode('keeper');$('shooterStatsBtn').onclick=()=>setStatsMode('shooter');$('saveMatchBtn').onclick=saveMeta;$('saveNowBtn').onclick=saveMeta;$('loadMatchBtn').onclick=async()=>{if(currentMatchId)await openMatch(currentMatchId);else await saveMeta()};
 $('undoBtn').onclick=undo;$('refreshArchiveBtn').onclick=refreshArchive;$('printBtn').onclick=()=>window.print();
-$('newMatchBtn').onclick=()=>{if(!confirm('Start en ny kamp? Den nuværende kamp forbliver gemt i arkivet.'))return;currentMatchId=null;shots=[];selectedZone=null;updateMeta({title:'',match_date:new Date().toISOString().slice(0,10),opponent:'',goalkeeper:''});render();status('Ny kamp klar. Gem kampoplysninger eller registrér første skud.')};
+$('newMatchBtn').onclick=()=>{if(!confirm('Start en ny kamp? Den nuværende kamp forbliver gemt i arkivet.'))return;currentMatchId=null;shots=[];playerNotes={};selectedStatsPlayer='';selectedZone=null;updateMeta({title:'',match_date:new Date().toISOString().slice(0,10),opponent:'',goalkeeper:''});render();status('Ny kamp klar. Gem kampoplysninger eller registrér første skud.')};
 buildZones();$('matchDate').value=new Date().toISOString().slice(0,10);setStatsMode('keeper');render();
 try{if(!window.supabase||!window.APP_CONFIG?.SUPABASE_URL||!window.APP_CONFIG?.SUPABASE_KEY)throw Error('Tilføj Supabase URL og publishable key i config.js.');sb=window.supabase.createClient(window.APP_CONFIG.SUPABASE_URL,window.APP_CONFIG.SUPABASE_KEY);status('Forbundet. Henter kamparkiv…');refreshArchive()}catch(e){status(e.message,true);$('archive').innerHTML='<span class="muted">Konfigurér Supabase for at bruge cloud-arkivet.</span>'}
 </script>

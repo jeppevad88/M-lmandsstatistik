@@ -1,1 +1,1 @@
-window.APP_CONFIG = { SUPABASE_URL: "INDSÆT_SUPABASE_PROJECT_URL", SUPABASE_KEY: "INDSÆT_SUPABASE_PUBLISHABLE_KEY" };
+window.APP_CONFIG = { SUPABASE_URL: "https://jgcufgjezxxrbxarucam.supabase.co", SUPABASE_KEY: "sb_publishable_rOLPTdjI76StNG_qO1Egcw_jMdvh_E6" };

@@ -1,10 +1,5 @@
-MÅLMANDSSTATISTIK – KLIKBARE SKUDOMRÅDER PÅ HÅNDBOLDBANEN
+Målmandsstatistik – opdatering med klikbar håndboldbane
 
-1. Åbn Supabase > SQL Editor.
-2. Kør indholdet af opdater_supabase.sql én gang. Det tilføjer feltet shot_location og sletter ikke eksisterende data.
-3. Upload den nye index.html til dit GitHub-repository og erstat den gamle fil.
-4. Behold din eksisterende config.js uændret.
-5. Åbn hjemmesiden og tryk Ctrl+F5.
+Upload både index.html OG handboldbane.png til samme mappe i dit GitHub-repository. Behold din eksisterende config.js.
 
-Den nye bane lader dig vælge fløj, back uden for 9 m, back mellem 6 og 9 m, center, gennembrud, streg/tæt på 6 m og strafkast.
-Skudstedet gemmes sammen med hvert skud og vises i skudlisten. De eksisterende målzoner i målet bevares.
+Banen bruges ved registrering af skud og vises også i spillerstatistikken. Prikkerne viser spillerens skudsteder (grøn = redning, rød = mål). Der kræves ingen ny SQL, da skudsted gemmes i det eksisterende shot_location-felt.

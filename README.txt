@@ -1,8 +1,10 @@
-OPDATERING AF MÅLMANDSSKUDSDIAGRAMMET
+MÅLMANDSSTATISTIK – KLIKBARE SKUDOMRÅDER PÅ HÅNDBOLDBANEN
 
-1. Kør supabase_update_player_number.sql i Supabase SQL Editor. Den tilføjer spillerens nummer og tillader resultatet Brændt. Den sletter ikke gamle data.
-2. Upload den nye index.html samt din eksisterende config.js til GitHub Pages. Behold dine egne Supabase værdier i config.js.
-3. Hjemmesiden viser nu to statistikvisninger: Målmandens statistik og Spillernes statistik.
-4. Resultater: Redning, Mål og Brændt. Spillernes statistik viser skud, mål, brændte skud og skud reddet af målmanden.
+1. Åbn Supabase > SQL Editor.
+2. Kør indholdet af opdater_supabase.sql én gang. Det tilføjer feltet shot_location og sletter ikke eksisterende data.
+3. Upload den nye index.html til dit GitHub-repository og erstat den gamle fil.
+4. Behold din eksisterende config.js uændret.
+5. Åbn hjemmesiden og tryk Ctrl+F5.
 
-Bemærk: Den eksisterende databasekolonne minute bliver stående, men bruges ikke længere.
+Den nye bane lader dig vælge fløj, back uden for 9 m, back mellem 6 og 9 m, center, gennembrud, streg/tæt på 6 m og strafkast.
+Skudstedet gemmes sammen med hvert skud og vises i skudlisten. De eksisterende målzoner i målet bevares.
